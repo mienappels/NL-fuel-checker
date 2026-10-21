@@ -1,5 +1,5 @@
 {
-  "domain": "nl-fuel-checker",
+  "domain": "nl_fuel_checker",
   "name": "NL Fuel Checker",
   "codeowners": ["@mienappels"],
   "dependencies": [],
