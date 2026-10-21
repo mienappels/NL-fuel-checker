@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.3] - 2026-10-21
+
+### Changed
+
+- Updated the integration version to 0.2.3.
+
+### Fixed
+
+- Fixed YAML platform startup by using the coordinator's standard refresh method instead of the config-entry-only first refresh.
+- Platforms now report a failed initial data fetch as `PlatformNotReady`.
+
 ## [0.2.0] - 2026-10-08
 
 ### Changed
