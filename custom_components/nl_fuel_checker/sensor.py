@@ -3,6 +3,7 @@ from datetime import timedelta
 import voluptuous as vol
 
 from homeassistant.components.sensor import SensorEntity
+from homeassistant.exceptions import PlatformNotReady
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.update_coordinator import (
     DataUpdateCoordinator,
@@ -19,7 +20,7 @@ _LOGGER = logging.getLogger(__name__)
 
 DOMAIN = "nl_fuel_checker"
 
-CONF_POSTAL_CODE = "postcode"
+CONF_POSTAL_CODE = "postal_code"
 CONF_FUEL_TYPE = "fuel_type"
 CONF_RANGE = "range"
 CONF_LIMIT = "limit"
@@ -33,7 +34,7 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Optional(CONF_FUEL_TYPE, default="euro95"): vol.In(FUEL_TYPES),
     vol.Optional(CONF_SOURCE, default="independer"): vol.In(SOURCES),
     vol.Optional(CONF_RANGE, default=5): cv.positive_int,
-    vol.Optional(CONF_LIMIT, default=1): vol.All(vol.Coerce(int), vol.Range(min=1, max=10)),
+    vol.Optional(CONF_LIMIT, default=1): vol.All(vol.Coerce(int), vol.Range(min=1, max=5)),
 })
 
 SCAN_INTERVAL = timedelta(hours=4)
@@ -56,7 +57,15 @@ async def async_setup_platform(hass, config, asyncAddEntities, discoveryInfo=Non
         hass, dataSource, postalCode, fuelType, sourceName
     )
 
-    await dataCoordinator.async_config_entry_first_refresh()
+    try:
+        await dataCoordinator.async_refresh()
+    except UpdateFailed as errorMessage:
+        raise PlatformNotReady(
+            f"Fout bij eerste keer ophalen van data: {errorMessage}"
+        ) from errorMessage
+
+    if not dataCoordinator.last_update_success:
+        raise PlatformNotReady("Fout bij eerste keer ophalen van data")
 
     entities = []
     for rank in range(resultLimit):
