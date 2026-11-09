@@ -1,5 +1,4 @@
 import asyncio
-import async_timeout
 from urllib.parse import quote
 from .source import FuelSource
 
@@ -20,7 +19,7 @@ class PompwijzerSource(FuelSource):
         url = f"https://nominatim.openstreetmap.org/search?q={encodedAddress}&format=json&limit=1"
         headers = {"User-Agent": "NlFuelChecker/1.0"}
         
-        async with async_timeout.timeout(10):
+        async with asyncio.timeout(10):
             response = await self.session.get(url, headers=headers)
             response.raise_for_status()
             data = await response.json()
@@ -43,7 +42,7 @@ class PompwijzerSource(FuelSource):
             "Accept": "application/json"
         }
 
-        async with async_timeout.timeout(15):
+        async with asyncio.timeout(15):
             distanceTask = self.session.get(urlDistances, headers=headers)
             priceTask = self.session.get(urlPrices, headers=headers)
             

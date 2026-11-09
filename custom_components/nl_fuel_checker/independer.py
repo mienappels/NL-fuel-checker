@@ -1,4 +1,4 @@
-import async_timeout
+import asyncio
 from urllib.parse import quote
 from .source import FuelSource
 
@@ -17,7 +17,7 @@ class IndependerSource(FuelSource):
         encodedPostalCode = quote(self.postalCode)
         apiUrl = f"https://www.independer.nl/api/autoverzekering/gasstation/getgasstations?addressInformation={encodedPostalCode}&fuelType={self.fuelId}&range={self.searchRange}&sorting=1"
         
-        async with async_timeout.timeout(15):
+        async with asyncio.timeout(15):
             response = await self.session.get(
                 apiUrl, 
                 headers={"User-Agent": "Mozilla/5.0", "Accept": "application/json"}
