@@ -8,7 +8,15 @@ If the upstream fuel providers change their APIs or website behavior, this integ
 
 ## Installation
 
-### HACS
+### Marketplace
+
+1. Make sure you have HACS installed using [these instructions](https://hacs.xyz/docs/use/).
+2. Click the button below to add the custom repository to HACS directly:\
+[![Open your Home Assistant instance and open a repository in the Marketplace.](https://my.home-assistant.io/badges/marketplace_repository.svg)](https://my.home-assistant.io/redirect/marketplace_repository/?owner=mienappels&repository=NL-fuel-checker)
+3. Press the download button in the bottom right corner.
+4. Restart Home Assistant.
+
+### Custom repository
 
 1. Install [HACS](https://hacs.xyz/) if you haven't already.
 2. Click the 3 dots in the top right corner of HACS.
