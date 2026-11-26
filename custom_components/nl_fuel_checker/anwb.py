@@ -156,7 +156,7 @@ class AnwbSource(FuelSource):
                 (
                     price
                     for price in (station.get("prices") or [])
-                    if price.get("fuelType") == self.responseFuelType
+                    if str(price.get("fuelType", "")).lower() == self.responseFuelType
                 ),
                 None,
             )
