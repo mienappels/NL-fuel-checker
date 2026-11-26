@@ -15,6 +15,7 @@ from homeassistant.components.sensor import PLATFORM_SCHEMA
 
 from .independer import IndependerSource
 from .pompwijzer import PompwijzerSource
+from .anwb import AnwbSource
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -27,7 +28,7 @@ CONF_LIMIT = "limit"
 CONF_SOURCE = "source"
 
 FUEL_TYPES = ["euro95", "euro98", "diesel", "lpg", "aardgas", "biodiesel", "premium_benzine", "premium_diesel"]
-SOURCES = ["independer", "pompwijzer"]
+SOURCES = ["independer", "pompwijzer", "anwb"]
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Required(CONF_POSTAL_CODE): cv.string,
@@ -50,8 +51,12 @@ async def async_setup_platform(hass, config, asyncAddEntities, discoveryInfo=Non
 
     if sourceName == "independer":
         dataSource = IndependerSource(httpClient, postalCode, fuelType, searchRange)
-    else:
+    elif sourceName == "anwb":
+        dataSource = AnwbSource(httpClient, postalCode, fuelType, searchRange)
+    elif sourceName == "pompwijzer":
         dataSource = PompwijzerSource(httpClient, postalCode, fuelType, searchRange)
+    else:
+        raise ValueError(f"Onbekende bron: {sourceName}")
 
     dataCoordinator = NlFuelCoordinator(
         hass, dataSource, postalCode, fuelType, sourceName
