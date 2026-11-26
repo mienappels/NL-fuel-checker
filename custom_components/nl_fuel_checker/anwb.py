@@ -9,15 +9,6 @@ API_URL = "https://api.anwb.nl/routing/points-of-interest/v3/all"
 GEOCODING_URL = "https://nominatim.openstreetmap.org/search"
 
 FUEL_MAPPING = {
-    "euro95": "EURO95",
-    "euro98": "EURO98",
-    "diesel": "DIESEL",
-    "lpg": "AUTOGAS",
-    "premium_diesel": "DIESEL_SPECIAL",
-    "aardgas": "CNG",
-}
-
-RESPONSE_FUEL_MAPPING = {
     "euro95": "euro95",
     "euro98": "euro98",
     "diesel": "diesel",
@@ -40,9 +31,8 @@ class AnwbSource(FuelSource):
                 f"{list(FUEL_MAPPING.keys())}. "
                 f"Ongeldige keuze: '{self.fuelType}'."
             )
-
         self.anwbFuelType = FUEL_MAPPING[self.fuelType]
-        self.responseFuelType = RESPONSE_FUEL_MAPPING[self.fuelType]
+        self.anwbFuelType = FUEL_MAPPING[self.fuelType]
 
     async def getJson(self, url, headers=None):
         async with self.session.get(url, headers=headers) as response:
@@ -157,7 +147,7 @@ class AnwbSource(FuelSource):
                 (
                     price
                     for price in (station.get("prices") or [])
-                    if price.get("fuelType") == self.responseFuelType
+                    if price.get("fuelType") == self.anwbFuelType
                 ),
                 None,
             )
