@@ -2,7 +2,7 @@
 
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/mienappels/NL-fuel-checker)
 
-Home Assistant custom integration to fetch fuel prices from multiple Dutch sources, including Independer and PompWijzer. This component is not affiliated with either service provider.
+Home Assistant custom integration to fetch fuel prices from multiple Dutch sources, including Independer, PompWijzer, and ANWB. This component is not affiliated with any of these service providers.
 
 If the upstream fuel providers change their APIs or website behavior, this integration may stop working. Please report issues on the [GitHub page](https://github.com/mienappels/NL-fuel-checker/issues).
 
@@ -33,11 +33,27 @@ If the upstream fuel providers change their APIs or website behavior, this integ
 sensor:
   - platform: nl_fuel_checker
     postal_code: "1234 AB"
-    fuel_type: "euro95" # Options for Independer: euro98, euro95, diesel, lpg, aardgas, biodiesel, premium_benzine, premium_diesel
-    range: 5 # Maximum distance in km
-    limit: 3 # Amount of fuel stations. Maximum is 5.
-    source: "independer" # Optional: "independer" (default) or "pompwijzer"; PompWijzer currently supports only euro95, euro98 and diesel
+    fuel_type: euro95
+    range: 5
+    limit: 3
+    source: independer
 ```
+
+Configuration options:
+
+- `postal_code`: Dutch postal code used to find nearby stations.
+- `fuel_type`: Fuel type to fetch. Available fuel types depend on the selected source; see the table below.
+- `range`: Maximum search distance in kilometres.
+- `limit`: Number of station sensors to create (1–5).
+- `source`: Price provider: `independer` (default), `pompwijzer`, or `anwb`.
+
+### Supported sources and fuel types
+
+| Source | Supported fuel types |
+| --- | --- |
+| Independer | `euro95`, `euro98`, `diesel`, `lpg`, `aardgas`, `biodiesel`, `premium_benzine`, `premium_diesel` |
+| PompWijzer | `euro95`, `euro98`, `diesel` |
+| ANWB | `euro95`, `euro98`, `diesel`, `lpg`, `aardgas`, `premium_diesel` |
 
 The integration fetches prices from one or more configured Dutch fuel price providers. The scan interval is set to 4 hours to avoid rate limiting. If you want to change the scan interval, open a pull request with your changes.
 
