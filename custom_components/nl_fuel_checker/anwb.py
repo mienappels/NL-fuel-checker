@@ -14,7 +14,7 @@ REQUEST_FUEL_MAPPING = {
     "diesel": "DIESEL",
     "lpg": "AUTOGAS",
     "premium_diesel": "DIESEL_SPECIAL",
-    "aardgas": "CNG",
+    "cng": "CNG",
 }
 
 RESPONSE_FUEL_MAPPING = {
@@ -23,7 +23,7 @@ RESPONSE_FUEL_MAPPING = {
     "diesel": "diesel",
     "lpg": "autogas",
     "premium_diesel": "diesel_special",
-    "aardgas": "cng",
+    "cng": "cng",
 }
 
 

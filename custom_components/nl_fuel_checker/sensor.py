@@ -32,7 +32,7 @@ FUEL_TYPES = [
     "euro98",
     "diesel",
     "lpg",
-    "aardgas",
+    "cng",
     "biodiesel",
     "premium_benzine",
     "premium_diesel",
@@ -41,8 +41,10 @@ SOURCES = ["independer", "pompwijzer", "anwb"]
 SOURCE_FUEL_TYPES = {
     "independer": set(FUEL_TYPES),
     "pompwijzer": {"euro95", "euro98", "diesel"},
-    "anwb": {"euro95", "euro98", "diesel", "lpg", "premium_diesel", "aardgas"},
+    "anwb": {"euro95", "euro98", "diesel", "lpg", "premium_diesel", "cng"},
 }
+
+FUEL_TYPE_NAMES = {"cng": "CNG"}
 
 
 def validate_source_fuel(config):
@@ -151,7 +153,10 @@ class NlFuelSensor(CoordinatorEntity, SensorEntity):
 
         displayRank = self.rank + 1
 
-        self._attr_name = f"{sourceName.capitalize()} {fuelType.capitalize()} ({postalCode}) #{displayRank}"
+        fuelName = FUEL_TYPE_NAMES.get(fuelType, fuelType.capitalize())
+        self._attr_name = (
+            f"{sourceName.capitalize()} {fuelName} ({postalCode}) #{displayRank}"
+        )
         self._attr_unique_id = f"nlfuel_{sourceName}_{postalCode.replace(' ', '')}_{fuelType}_{displayRank}".lower()
         self._attr_icon = "mdi:gas-station"
         self._attr_native_unit_of_measurement = "€/L"

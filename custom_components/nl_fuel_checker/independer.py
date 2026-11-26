@@ -13,7 +13,7 @@ class IndependerSource(FuelSource):
             "euro95": 2,
             "diesel": 6,
             "lpg": 7,
-            "aardgas": 14,
+            "cng": 14,
             "biodiesel": 17,
             "premium_benzine": 13,
             "premium_diesel": 12,

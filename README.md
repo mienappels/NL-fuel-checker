@@ -51,9 +51,9 @@ Configuration options:
 
 | Source | Supported fuel types |
 | --- | --- |
-| Independer | `euro95`, `euro98`, `diesel`, `lpg`, `aardgas`, `biodiesel`, `premium_benzine`, `premium_diesel` |
+| Independer | `euro95`, `euro98`, `diesel`, `lpg`, `cng`, `biodiesel`, `premium_benzine`, `premium_diesel` |
 | PompWijzer | `euro95`, `euro98`, `diesel` |
-| ANWB | `euro95`, `euro98`, `diesel`, `lpg`, `aardgas`, `premium_diesel` |
+| ANWB | `euro95`, `euro98`, `diesel`, `lpg`, `cng`, `premium_diesel` |
 
 The integration fetches prices from one or more configured Dutch fuel price providers. The scan interval is set to 4 hours to avoid rate limiting. If you want to change the scan interval, open a pull request with your changes.
 
