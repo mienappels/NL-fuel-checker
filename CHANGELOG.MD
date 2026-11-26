@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### [0.2.5] - 2026-11-26
+
+### Fixed
+
+- PompWijzer changed its API data format. Updated the integration to use the new versioned station and price snapshots, including stale-price filtering and consistent price/distance sorting.
+
+
 ### [0.2.4] - 2026-11-09
 
 ### Fixed
