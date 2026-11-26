@@ -1,10 +1,10 @@
 {
-  "domain": "nl_fuel_checker",
-  "name": "NL Fuel Checker",
-  "codeowners": ["@mienappels"],
-  "dependencies": [],
-  "documentation": "https://github.com/mienappels/NL-fuel-checker",
-  "iot_class": "cloud_polling",
-  "issue_tracker": "https://github.com/mienappels/NL-fuel-checker/issues",
-  "version": "0.2.5"
+    "domain": "nl_fuel_checker",
+    "name": "NL Fuel Checker",
+    "codeowners": ["@mienappels"],
+    "dependencies": [],
+    "documentation": "https://github.com/mienappels/NL-fuel-checker",
+    "iot_class": "cloud_polling",
+    "issue_tracker": "https://github.com/mienappels/NL-fuel-checker/issues",
+    "version": "0.3.0"
 }

@@ -14,6 +14,16 @@ FUEL_MAPPING = {
     "diesel": "DIESEL",
     "lpg": "AUTOGAS",
     "premium_diesel": "DIESEL_SPECIAL",
+    "aardgas": "CNG",
+}
+
+RESPONSE_FUEL_MAPPING = {
+    "euro95": "euro95",
+    "euro98": "euro98",
+    "diesel": "diesel",
+    "lpg": "autogas",
+    "premium_diesel": "diesel_special",
+    "aardgas": "cng",
 }
 
 
@@ -32,6 +42,7 @@ class AnwbSource(FuelSource):
             )
 
         self.anwbFuelType = FUEL_MAPPING[self.fuelType]
+        self.responseFuelType = RESPONSE_FUEL_MAPPING[self.fuelType]
 
     async def getJson(self, url, headers=None):
         async with self.session.get(url, headers=headers) as response:
@@ -49,7 +60,7 @@ class AnwbSource(FuelSource):
             data = await self.getJson(url, headers)
 
         if not data:
-            raise Exception(f"Kan geen coördinaten vinden voor: {self.postalCode}")
+            raise RuntimeError(f"Kan geen coördinaten vinden voor: {self.postalCode}")
 
         self.lat = float(data[0]["lat"])
         self.lon = float(data[0]["lon"])
@@ -123,8 +134,14 @@ class AnwbSource(FuelSource):
             if latitude is None or longitude is None:
                 continue
 
-            latitude = float(latitude)
-            longitude = float(longitude)
+            try:
+                latitude = float(latitude)
+                longitude = float(longitude)
+            except (TypeError, ValueError):
+                continue
+
+            if not math.isfinite(latitude) or not math.isfinite(longitude):
+                continue
 
             distanceKm = self.calculateDistance(
                 self.lat,
@@ -140,7 +157,7 @@ class AnwbSource(FuelSource):
                 (
                     price
                     for price in (station.get("prices") or [])
-                    if price.get("fuelType") == self.anwbFuelType
+                    if price.get("fuelType") == self.responseFuelType
                 ),
                 None,
             )

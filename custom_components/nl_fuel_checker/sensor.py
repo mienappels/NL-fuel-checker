@@ -27,18 +27,55 @@ CONF_RANGE = "range"
 CONF_LIMIT = "limit"
 CONF_SOURCE = "source"
 
-FUEL_TYPES = ["euro95", "euro98", "diesel", "lpg", "aardgas", "biodiesel", "premium_benzine", "premium_diesel"]
+FUEL_TYPES = [
+    "euro95",
+    "euro98",
+    "diesel",
+    "lpg",
+    "aardgas",
+    "biodiesel",
+    "premium_benzine",
+    "premium_diesel",
+]
 SOURCES = ["independer", "pompwijzer", "anwb"]
+SOURCE_FUEL_TYPES = {
+    "independer": set(FUEL_TYPES),
+    "pompwijzer": {"euro95", "euro98", "diesel"},
+    "anwb": {"euro95", "euro98", "diesel", "lpg", "premium_diesel", "aardgas"},
+}
 
-PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
-    vol.Required(CONF_POSTAL_CODE): cv.string,
-    vol.Optional(CONF_FUEL_TYPE, default="euro95"): vol.In(FUEL_TYPES),
-    vol.Optional(CONF_SOURCE, default="independer"): vol.In(SOURCES),
-    vol.Optional(CONF_RANGE, default=5): cv.positive_int,
-    vol.Optional(CONF_LIMIT, default=1): vol.All(vol.Coerce(int), vol.Range(min=1, max=5)),
-})
+
+def validate_source_fuel(config):
+    source = config[CONF_SOURCE]
+    fuel_type = config[CONF_FUEL_TYPE]
+    supported_fuels = SOURCE_FUEL_TYPES[source]
+
+    if fuel_type not in supported_fuels:
+        raise vol.Invalid(
+            f"Bron '{source}' ondersteunt uitsluitend "
+            f"{sorted(supported_fuels)}. Ongeldige brandstof: '{fuel_type}'."
+        )
+
+    return config
+
+
+PLATFORM_SCHEMA = vol.All(
+    PLATFORM_SCHEMA.extend(
+        {
+            vol.Required(CONF_POSTAL_CODE): cv.string,
+            vol.Optional(CONF_FUEL_TYPE, default="euro95"): vol.In(FUEL_TYPES),
+            vol.Optional(CONF_SOURCE, default="independer"): vol.In(SOURCES),
+            vol.Optional(CONF_RANGE, default=5): cv.positive_int,
+            vol.Optional(CONF_LIMIT, default=1): vol.All(
+                vol.Coerce(int), vol.Range(min=1, max=5)
+            ),
+        }
+    ),
+    validate_source_fuel,
+)
 
 SCAN_INTERVAL = timedelta(hours=4)
+
 
 async def async_setup_platform(hass, config, asyncAddEntities, discoveryInfo=None):
     postalCode = config[CONF_POSTAL_CODE]
@@ -74,7 +111,9 @@ async def async_setup_platform(hass, config, asyncAddEntities, discoveryInfo=Non
 
     entities = []
     for rank in range(resultLimit):
-        entities.append(NlFuelSensor(dataCoordinator, postalCode, fuelType, rank, sourceName))
+        entities.append(
+            NlFuelSensor(dataCoordinator, postalCode, fuelType, rank, sourceName)
+        )
 
     asyncAddEntities(entities)
 
@@ -97,7 +136,9 @@ class NlFuelCoordinator(DataUpdateCoordinator):
         try:
             return await self.dataSource.fetchPrices()
         except Exception as errorMessage:
-            raise UpdateFailed(f"Fout bij ophalen van data: {errorMessage}")
+            raise UpdateFailed(
+                f"Fout bij ophalen van data: {errorMessage}"
+            ) from errorMessage
 
 
 class NlFuelSensor(CoordinatorEntity, SensorEntity):
@@ -107,13 +148,13 @@ class NlFuelSensor(CoordinatorEntity, SensorEntity):
         self.fuelType = fuelType
         self.rank = rank
         self.sourceName = sourceName
-        
+
         displayRank = self.rank + 1
-        
+
         self._attr_name = f"{sourceName.capitalize()} {fuelType.capitalize()} ({postalCode}) #{displayRank}"
         self._attr_unique_id = f"nlfuel_{sourceName}_{postalCode.replace(' ', '')}_{fuelType}_{displayRank}".lower()
         self._attr_icon = "mdi:gas-station"
-        self._attr_native_unit_of_measurement = "€/L" 
+        self._attr_native_unit_of_measurement = "€/L"
 
     @property
     def native_value(self):
@@ -136,6 +177,6 @@ class NlFuelSensor(CoordinatorEntity, SensorEntity):
                 "Adres": f"{stationData.get('address')}, {stationData.get('city')}",
                 "latitude": stationData.get("latitude"),
                 "longitude": stationData.get("longitude"),
-                "Rang": self.rank + 1
+                "Rang": self.rank + 1,
             }
         return {"Fout": "Niet genoeg tankstations gevonden."}
